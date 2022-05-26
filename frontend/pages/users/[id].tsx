@@ -213,7 +213,7 @@ const Page: NextPage = props => {
 
 			getUser();
 		}
-	}, [router.isReady]);
+	}, [router.isReady, id]);
 
 	// render
 	return (

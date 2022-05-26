@@ -10,6 +10,8 @@ import Image from 'next/image';
 
 import Link from 'next/link';
 
+import Moment from 'moment';
+
 import Swal from 'sweetalert2';
 
 import type { CreateUserReturnDto } from '../../../backend/src/users/dto/create-user-return.dto';
@@ -142,6 +144,16 @@ const Page: NextPage = () => {
 
 												Name
 											</th>
+
+											<th>
+
+												Create at
+											</th>
+
+											<th>
+
+												Updated at
+											</th>
 										</tr>
 									</thead>
 
@@ -181,6 +193,16 @@ const Page: NextPage = () => {
 														<td>
 
 															{user.name}
+														</td>
+
+														<td>
+
+															{Moment(user.createdAt).isValid() ? Moment(user.createdAt).format('YYYY-MM-DD HH:mm:ss') : '---'}
+														</td>
+
+														<td>
+
+															{Moment(user.updatedAt).isValid() ? Moment(user.updatedAt).format('YYYY-MM-DD HH:mm:ss') : '---'}
 														</td>
 													</tr>
 												);

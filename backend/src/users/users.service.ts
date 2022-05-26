@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -13,21 +13,18 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UsersService {
 
-	constructor(@InjectRepository(User) private usersRepository: Repository<User>,) { }
+	constructor(@InjectRepository(User) private usersRepository: Repository<User>) { }
 
 	/**
 	 * create user
 	 */
-	async create(createUserDto: CreateUserDto): Promise<User> {
+	create(createUserDto: CreateUserDto): Promise<User> {
 
-		// create model
-		const model = await this.usersRepository.save({
+		// create
+		return this.usersRepository.save({
 
 			...createUserDto
 		});
-
-		// return model
-		return model;
 	}
 
 	/**
@@ -35,6 +32,7 @@ export class UsersService {
 	 */
 	findAll(): Promise<[User[], number]> {
 
+		// find all
 		return this.usersRepository.findAndCount();
 	}
 
@@ -43,19 +41,42 @@ export class UsersService {
 	 */
 	findOne(id: number): Promise<User> {
 
+		// find one
 		return this.usersRepository.findOne(id);
 	}
 
-	update(id: number, updateUserDto: UpdateUserDto) {
+	/**
+	 * update model
+	 */
+	update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
 
-		return `This action updates a #${id} user`;
+		// update
+		return this.usersRepository.save({
+
+			...updateUserDto,
+
+			id: id
+		});
 	}
 
 	/**
 	 * remove
 	 */
-	remove(id: number) {
+	async remove(id: number): Promise<number> {
 
-		return this.usersRepository.softDelete(id);
+		// model
+		const model = await this.findOne(+id);
+
+		// model not found
+		if (!model) {
+
+			throw new Error('model not found');
+		}
+
+		// delete
+		this.usersRepository.softDelete(id);
+
+		// return
+		return id;
 	}
 }

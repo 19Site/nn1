@@ -11,6 +11,9 @@ async function bootstrap() {
 	// app
 	const app = await NestFactory.create(AppModule);
 
+	// set global prefix
+	app.setGlobalPrefix('api/v1');
+
 	// set custom validation exception
 	app.useGlobalPipes(
 
@@ -23,7 +26,7 @@ async function bootstrap() {
 					ok: false,
 
 					error: 'invalid value of ' + validationErrors[0].property
-				}, HttpStatus.BAD_REQUEST);
+				}, HttpStatus.OK);
 			},
 		})
 	);

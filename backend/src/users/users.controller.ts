@@ -10,6 +10,10 @@ import { FindUsersReturnDto } from './dto/find-users-return.dto';
 
 import { CreateUserReturnDto } from './dto/create-user-return.dto';
 
+import { UpdateUserReturnDto } from './dto/update-user-return.dto';
+
+import { RemoveUserReturnDto } from './dto/remove-user-return.dto';
+
 @Controller('users')
 export class UsersController {
 
@@ -47,7 +51,7 @@ export class UsersController {
 			dto.error = err.message;
 
 			// throw error
-			throw new HttpException(dto, HttpStatus.BAD_REQUEST);
+			throw new HttpException(dto, HttpStatus.OK);
 		}
 	}
 
@@ -96,14 +100,72 @@ export class UsersController {
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+	async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UpdateUserReturnDto> {
 
-		return this.usersService.update(+id, updateUserDto);
+		// try
+		try {
+
+			// create model
+			const model = await this.usersService.update(+id, updateUserDto);
+
+			// prepare dto
+			const dto = new UpdateUserReturnDto();
+
+			dto.ok = true;
+
+			dto.data = model;
+
+			// return dto
+			return dto;
+		}
+
+		// error
+		catch (err) {
+
+			// prepare dto
+			const dto = new UpdateUserReturnDto();
+
+			dto.ok = false;
+
+			dto.error = err.message;
+
+			// throw error
+			throw new HttpException(dto, HttpStatus.OK);
+		}
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
+	async remove(@Param('id') id: string): Promise<RemoveUserReturnDto> {
 
-		return this.usersService.remove(+id);
+		// try
+		try {
+
+			// remove
+			await this.usersService.remove(+id);
+
+			// prepare dto
+			const dto = new RemoveUserReturnDto();
+
+			dto.ok = true;
+
+			dto.id = +id;
+
+			// return dto
+			return dto;
+		}
+
+		// error
+		catch (err) {
+
+			// prepare dto
+			const dto = new RemoveUserReturnDto();
+
+			dto.ok = false;
+
+			dto.error = err.message;
+
+			// throw error
+			throw new HttpException(dto, HttpStatus.OK);
+		}
 	}
 }
